@@ -14,57 +14,50 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 		<title>Desire2Learn Auth SDK Sample</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-		<link href="css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 	</head>
 	<body>
 	<div class="container">
 		<div class="navbar navbar-default">
-	     		<div class="navbar-header">
-	          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	          </button>
+	     	<div class="navbar-header">
 	          <a class="navbar-brand" style='color:black;'>Desire2Learn Auth SDK Sample</a>
-	        </div>
-	        <div class="navbar-collapse collapse">
+	        </div> 	
+	        <div class="navbar-collapse">
 	          <form class='navbar-form navbar-right col-md-12'>
 				<div class="form-group" id='profileDiv'>
-					<select id='userProfiles' class='form-control'></select>
+					<select id='userProfiles' class='form-control auth-field'></select>
 				</div>
 				<div class="form-group">
 					<input class="form-control" name="newProfile" type="text" id="profileNameField" placeholder='Profile Name' />
 				</div>
 				<button class="btn btn-success" id='updateProfiles' type='button' onClick="saveProfile()">Save</button>
-				<button class="btn btn-danger" id='rmProfile'  ><span  class="glyphicon glyphicon-remove" onclick='removeProfile()' ></span></button>
-				<button class="btn btn-default" name='authBtn' type="button" name="resetProfile" id="resetButton" onClick="loadDefaults()">Load Defaults</button>
+				<button class="btn btn-danger" id='rmProfile'> <span class="close">&times;</span></button>
+				<button class="btn btn-default auth-field" name='authBtn' type="button" name="resetProfile" id="resetButton" onClick="loadDefaults()">Load Defaults</button>
 	          </form>
 	        </div>
 	      </div>
+	     <div id='successalert' class="alert alert-success" style="display:none;"> <strong>Success!</strong> Profile has now been saved.</div>
 		<form class='form-horizontal col-md-12' role='form' method="get" action="authenticateUser.php" id="configForm">
-			<div id='successalert' class="alert alert-success" style="display:none;"> <strong>Success!</strong> Profile has now been saved.</div>
-			<span id="errorField1" class="error" hidden="true">Error: </span><span id="errorField2"></span>
 			<div class="form-group">
 				<label for='hostField' class='col-md-1 control-label'>Host</label>
 				<div class="col-md-4">
-					<input class='form-control' name="hostField" type="text" id="hostField">
+					<input class='form-control auth-field' name="hostField" type="text" id="hostField">
 				</div>
 				<label for='portField' class='col-md-1 control-label'>Port</label>
 				<div class="col-md-3">
-					<input class='form-control' name="portField" type="text" id="portField">
+					<input class='form-control auth-field' name="portField" type="text" id="portField">
 				</div>
 				<div class="checkbox col-md-3">
-					<label><input id='schemeField' name='schemeField' type="checkbox" />HTTPS</label>
+					<label><input id='schemeField' name='schemeField' type="checkbox" class='auth-field' />HTTPS</label>
 				</div>
 			</div>
 			<div class="form-group" id='appFields'>
 				<label for='appIDField' class='col-md-1 control-label'>App ID</label>
 				<div class="col-md-4">
-					<input class='form-control' name="appIDField" type="text" id="appIDField" >
+					<input class='form-control auth-field' name="appIDField" type="text" id="appIDField" >
 				</div>
 				<label for='appKeyField' class='col-md-1 control-label'>App Key</label>
 				<div class="col-md-4">
-					<input class='form-control' name="appKeyField" type="text" id="appKeyField">
+					<input class='form-control auth-field' name="appKeyField" type="text" id="appKeyField">
 				</div>
 			</div>
 			<div id='authButtons' class="form-group">
@@ -75,13 +68,13 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 				</div>
 			</div>
 			<div id='userFields' class="form-group" id='userFields'>
-				<label for='userIDField' class='col-md-1 control-label'>User ID</label>
+				<label for='userIDField' class='col-md-1 control-label auth-field'>User ID</label>
 				<div class="col-md-4">
-					<input class='form-control' name="userIDField" type="text" id="userIDField" value="<?php echo $userId; ?>">
+					<input class='form-control auth-field' name="userIDField" type="text" id="userIDField" value="<?php echo $userId; ?>">
 				</div>
-				<label for='userKeyField' class='col-md-1 control-label'>User Key</label>
+				<label for='userKeyField' class='col-md-1 control-label auth-field'>User Key</label>
 				<div class="col-md-4">
-					<input class='form-control' name="userKeyField" type="text" id="userKeyField" value="<?php echo $userKey; ?>">
+					<input class='form-control auth-field' name="userKeyField" type="text" id="userKeyField" value="<?php echo $userKey; ?>">
 				</div>
 				<div class="col-md-1">
 					<input id='deauthBtn' class="btn btn-danger" type='button' name="authBtn" value='Deauthenticate' onclick='deAuthenticate()'>
@@ -119,6 +112,7 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 			   		<label for="exampleInputFile">File input</label>
 			    	<input class='' type="file" id="exampleInputFile">
 			   		<a>Clear file</a>
+					<input class='form-control' name="paramField" type="text" placeholder="File Param Name" id="paramField">
   				</div>
 			  <div class="post-forms form-group hidden">
 					<label for='contentType' class='control-label pull-left'>Content Type</label>
@@ -147,8 +141,8 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 			  </div>
 		</form>
 		</div>
-		<script src="//code.jquery.com/jquery.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/profiles.js"></script>
 		<script src="js/main.js"></script>
 	</body>
 </html>

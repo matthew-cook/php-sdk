@@ -25,17 +25,27 @@ $errorArray = array(
     D2LUserContext::RESULT_UNKNOWN => "Unknown error occured"
 );
 
-$host = $_GET['host'];
-$port = $_GET['port'];
-$scheme = $_GET['scheme'];
-$data = $_GET['data'];
-$apiMethod = $_GET['apiMethod'];
-$appKey = $_GET['appKey'];
-$appId = $_GET['appId'];
-$userId = $_GET['userId'];
-$userKey = $_GET['userKey'];
-$contentType = $_GET['contentType'];
+$host = $_POST['host'];
+$port = $_POST['port'];
+$scheme = $_POST['scheme'];
+$data = $_POST['data'];
+$apiMethod = $_POST['apiMethod'];
+$appKey = $_POST['appKey'];
+$appId = $_POST['appId'];
+$userId = $_POST['userId'];
+$userKey = $_POST['userKey'];
+$contentType = $_POST['contentType'];
 
+/*if isset($_POST['file']){
+
+}
+$retArr = array(
+        'response' => $_POST,
+        'statusCode' => $uri,
+);
+
+echo json_encode($retArr, JSON_PRETTY_PRINT); 
+exit();*/
 $authContextFactory = new D2LAppContextFactory();
 $authContext = $authContextFactory->createSecurityContext($appId, $appKey);
 $hostSpec = new D2LHostSpec($host, $port, $scheme);
@@ -52,10 +62,10 @@ curl_setopt_array($ch, $options);
 
 $tryAgain = true;
 $numAttempts = 1;
-while ($tryAgain && $numAttempts < 5) {
-    $uri = $opContext->createAuthenticatedUri($_GET['apiRequest'], $_GET['apiMethod']);
-    curl_setopt($ch, CURLOPT_URL, $uri);
 
+while ($tryAgain && $numAttempts < 5) {
+    $uri = $opContext->createAuthenticatedUri($_POST['apiRequest'], $_POST['apiMethod']);
+    curl_setopt($ch, CURLOPT_URL, $uri);
     switch($apiMethod) {
         case 'POST':
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -98,13 +108,14 @@ while ($tryAgain && $numAttempts < 5) {
         }
     }
     $numAttempts++;
-}
 
-$retArr = array(
+}
+    $retArr = array(
         'response' => $response,
         'statusCode' => $statusCode,
 );
 
 echo json_encode($retArr, JSON_PRETTY_PRINT); 
+
 
 ?>

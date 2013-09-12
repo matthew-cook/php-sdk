@@ -28,6 +28,7 @@ $authContextFactory = new D2LAppContextFactory();
 $authContext = $authContextFactory->createSecurityContext($appId, $appKey);
 $hostSpec = new D2LHostSpec($host, $port, $scheme);
 $url = $authContext->createUrlForAuthenticationFromHostSpec($hostSpec, $redirectPage);
+
 header("Location: $url");
 
 ?>
