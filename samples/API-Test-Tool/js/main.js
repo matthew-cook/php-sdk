@@ -1,12 +1,12 @@
 function doAPIRequest() {
-  if (document.getElementById('actionField').value != ""){
+  if (document.getElementById('actionField').value != "") {
     $('#responseField').val("");
     $('errorField1').addClass('hidden');
     $("errorField2").innerHTML = "";
     $("responseField").addClass('hidden');
     $("responseFieldLabel").addClass('hidden');
     $('#responseField').val("");
-
+    $('#statusField').val("");
     var host = $('#hostField').val().trim();
     var port = $('#portField').val().trim();
     var scheme = $('#schemeField').is(':checked') ? 'https' : 'http';
@@ -21,25 +21,51 @@ function doAPIRequest() {
     var userKey = $('#userKeyField').val().trim();
     var userId = $('#userIDField').val().trim();
     var contentType = $('#contentType').val().trim();
-    var paramName = $('#paramField').val().trim();
+    var uploadFile = document.getElementById('fileInput').files[0];
 
-    $.ajax({
-          type: "POST",
+    var data = {
+          host: host,
+          port: port,
+          scheme: scheme,
+          anon: anon,
+          apiRequest: req,
+          apiMethod: method,
+          contentType: contentType,
+          data: data,
+          appId: appId,
+          appKey: appKey,
+          userId: userId,
+          userKey: userKey 
+      };
+
+    if (uploadFile) {
+      var ajaxData = new FormData();
+      var fileName = document.getElementById('paramField').value;
+      ajaxData.append("fileInput", uploadFile );
+      ajaxData.append("fileName", fileName );
+      for(index in data) { 
+        ajaxData.append(index, data[index] );
+      }
+      sendRequest(ajaxData, true);
+  }else{
+    sendRequest(data, false);
+  }
+}
+}
+
+function sendRequest(postData, hasFile) {
+  if (hasFile){
+    $.ajaxSetup({
+      cache: false,
+      processData: false,
+      contentType: false,
+    });
+  }
+
+  $.ajax({
+          type: 'post',
           url: "doRequest.php",
-          data: {
-            host: host,
-            port: port,
-            scheme: scheme,
-            anon: anon,
-            apiRequest: req,
-            apiMethod: method,
-            contentType: contentType,
-            data: data,
-            appId: appId,
-            appKey: appKey,
-            userId: userId,
-            userKey: userKey
-          },
+          data: postData,
           success: function(data) {
             var output = {};
             if(data == '') {
@@ -60,10 +86,9 @@ function doAPIRequest() {
           error: function(jqXHR, textStatus, errorThrown) {
             $('#errorField1').removeClass('hidden');
             $("#errorField2").innerHTML = jqXHR.responseText;
-          },
-        });
-    }
-  }
+          }
+  });
+}
 
 function exampleGetVersions() {
   hideData();
@@ -119,8 +144,9 @@ if (!String.prototype.trim) {
   };
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
   loadProfileList();
+
   $('#userProfiles').change(function(){
       loadProfile(this.value);
       localStorage.setItem('lastProfile', this.value);
@@ -133,15 +159,15 @@ $(document).ready(function(){
 
   $("#authenticateBtn").on('click', function(){
     var lastprofile = localStorage.getItem('lastProfile');
-    if ((lastprofile == 'New Profile') || lastprofile == 'authProfile'){
+    if ((lastprofile == 'New Profile') || lastprofile == 'authProfile') {
       setProfile('authProfile');
     }else{
       removeProfile('authProfile');
     }
   });
   
-  if ((document.getElementById("appIDField").value == '' ) && (document.getElementById("appKeyField").value == '')){
-    if (localStorage.getItem('lastProfile') == 'authProfile'){
+  if ((document.getElementById("appIDField").value == '' ) && (document.getElementById("appKeyField").value == '')) {
+    if (localStorage.getItem('lastProfile') == 'authProfile') {
       loadProfile('authProfile');
     }else{
       loadDefaults();
@@ -151,9 +177,10 @@ $(document).ready(function(){
   if(document.getElementById("userIDField").value != "") {
     authenticateFields();
   } else {
-  $("#userFields").addClass('hidden');
+    $("#userFields").addClass('hidden');
     document.getElementById("hostField").disabled = false;
     document.getElementById("portField").disabled = false;
     document.getElementById("appKeyField").disabled = false;
   }
+
 });

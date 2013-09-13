@@ -36,16 +36,35 @@ $userId = $_POST['userId'];
 $userKey = $_POST['userKey'];
 $contentType = $_POST['contentType'];
 
-/*if isset($_POST['file']){
+if($_FILES['fileInput']) {
+    $uploaddir = 'uploads\\';
+    $uploadfile = $uploaddir . basename($_FILES['fileInput']['name']);
+    if (move_uploaded_file($_FILES['fileInput']['tmp_name'], $uploadfile)) {
+    } else {
+        $retArr = array(
+        'response' => 'UPLOAD FAILED',
+        'statusCode' => '',
+        );
+        echo json_encode($retArr); 
+       exit();
+    }
+    $id = uniqid();
+    $fileName = $_POST['fileName'];
+    $data = array($fileName =>'@'. $uploadfile);
+    $size = filesize($uploadfile);
 
+   /* $data = "--".$id."\n".
+    // "Content-Type: application/json\r\n".
+    // "\r\n".
+    // "{\"HTML\": null, \"Text\": \"Test\"}\r\n".
+    // "--".$id."\r\n".
+    // "Content-Disposition: form-data; name=\"\"; filename=\"file.txt\"\r\n".
+    // "Content-Type: application/octet-stream\r\n".
+    // "\r\n".
+    // "Hello, World! This is an example file.\r\n".
+     "--".$id."--"; */
 }
-$retArr = array(
-        'response' => $_POST,
-        'statusCode' => $uri,
-);
 
-echo json_encode($retArr, JSON_PRETTY_PRINT); 
-exit();*/
 $authContextFactory = new D2LAppContextFactory();
 $authContext = $authContextFactory->createSecurityContext($appId, $appKey);
 $hostSpec = new D2LHostSpec($host, $port, $scheme);
@@ -63,15 +82,15 @@ curl_setopt_array($ch, $options);
 $tryAgain = true;
 $numAttempts = 1;
 
-while ($tryAgain && $numAttempts < 5) {
+//while ($tryAgain && $numAttempts < 5) {
     $uri = $opContext->createAuthenticatedUri($_POST['apiRequest'], $_POST['apiMethod']);
-    curl_setopt($ch, CURLOPT_URL, $uri);
+    curl_setopt($ch, CURLOPT_URL, $uri);    
     switch($apiMethod) {
         case 'POST':
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Content-Type: '.$contentType,
-                'Content-Length: ' . strlen($data))
+              'Content-Type: '.$contentType,
+              'Content-Length: ' . $size)
             );
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             break;
@@ -109,13 +128,17 @@ while ($tryAgain && $numAttempts < 5) {
     }
     $numAttempts++;
 
-}
+//}
     $retArr = array(
         'response' => $response,
         'statusCode' => $statusCode,
 );
 
-echo json_encode($retArr, JSON_PRETTY_PRINT); 
+if($_FILES['fileInput']){
+    unlink(__DIR__.'\\'.$uploadfile);
+}    
+
+echo json_encode($retArr); 
 
 
 ?>

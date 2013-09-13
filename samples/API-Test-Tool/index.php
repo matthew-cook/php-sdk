@@ -83,7 +83,7 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 			</div>
 			</form>
 			<hr/>
-			<form class='col-md-10'>
+			<form id='requestForm' class='col-md-10' method="post" enctype="multipart/form-data">
 				<div class="form-group">
 					<label for='contentType'>Examples</label>
 						<input class="btn btn-default" type="button" value="Get Versions" onclick='exampleGetVersions()'>
@@ -110,7 +110,7 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 			  </div>
 			  	<div class="post-forms hidden form-group ">
 			   		<label for="exampleInputFile">File input</label>
-			    	<input class='' type="file" id="exampleInputFile">
+			    	<input type="file" name='fileInput' id="fileInput">
 			   		<a>Clear file</a>
 					<input class='form-control' name="paramField" type="text" placeholder="File Param Name" id="paramField">
   				</div>
