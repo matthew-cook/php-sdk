@@ -40,29 +40,9 @@ if($_FILES['fileInput']) {
     $uploaddir = 'uploads\\';
     $uploadfile = $uploaddir . basename($_FILES['fileInput']['name']);
     if (move_uploaded_file($_FILES['fileInput']['tmp_name'], $uploadfile)) {
-    } else {
-        $retArr = array(
-        'response' => 'UPLOAD FAILED',
-        'statusCode' => '',
-        );
-        echo json_encode($retArr); 
-       exit();
-    }
-    $id = uniqid();
-    $fileName = $_POST['fileName'];
-    $data = array($fileName =>'@'. $uploadfile);
-    $size = filesize($uploadfile);
-
-   /* $data = "--".$id."\n".
-    // "Content-Type: application/json\r\n".
-    // "\r\n".
-    // "{\"HTML\": null, \"Text\": \"Test\"}\r\n".
-    // "--".$id."\r\n".
-    // "Content-Disposition: form-data; name=\"\"; filename=\"file.txt\"\r\n".
-    // "Content-Type: application/octet-stream\r\n".
-    // "\r\n".
-    // "Hello, World! This is an example file.\r\n".
-     "--".$id."--"; */
+        $fileName = $_POST['fileName'];
+        $data = array($fileName =>'@'. $uploadfile);
+    } 
 }
 
 $authContextFactory = new D2LAppContextFactory();
@@ -82,24 +62,20 @@ curl_setopt_array($ch, $options);
 $tryAgain = true;
 $numAttempts = 1;
 
-//while ($tryAgain && $numAttempts < 5) {
+while ($tryAgain && $numAttempts < 5) {
     $uri = $opContext->createAuthenticatedUri($_POST['apiRequest'], $_POST['apiMethod']);
     curl_setopt($ch, CURLOPT_URL, $uri);    
     switch($apiMethod) {
         case 'POST':
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-              'Content-Type: '.$contentType,
-              'Content-Length: ' . $size)
-            );
+             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+               'Content-Type: '.$contentType));
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             break;
         case 'PUT':
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Content-Type: '.$contentType,
-                'Content-Length: ' . strlen($data))
-            );
+                'Content-Type: '.$contentType));
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             break;
         case 'DELETE':
@@ -117,8 +93,8 @@ $numAttempts = 1;
         // Try again since time skew should now be fixed.
         $tryAgain = true;
     } else {
-        if($httpCode == 302) {
-            $tryAgain = false;
+        $tryAgain = false;
+        if($httpCode == 302) {    
             // This usually happens when a call is made non-anonymously prior to logging in.
             // The D2L server will send a redirect to the log in page.
             $statusCode = "Redirect encountered (need to log in for this API call?) (HTTP status 302)";
@@ -127,11 +103,11 @@ $numAttempts = 1;
         }
     }
     $numAttempts++;
+}
 
-//}
-    $retArr = array(
-        'response' => $response,
-        'statusCode' => $statusCode,
+$retArr = array(
+    'response' => $response,
+    'statusCode' => $statusCode,
 );
 
 if($_FILES['fileInput']){
@@ -139,6 +115,5 @@ if($_FILES['fileInput']){
 }    
 
 echo json_encode($retArr); 
-
 
 ?>

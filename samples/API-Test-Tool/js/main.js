@@ -134,6 +134,11 @@ function authenticateFields() {
   $('.auth-field').prop('disabled', true);
 }
 
+function resetFormElem (e) {
+    e.wrap('<form>').closest('form').get(0).reset();
+    e.unwrap();
+}
+
 function deAuthenticate() {
   window.location.replace("index.php");
 }

@@ -46,7 +46,7 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 				<div class="col-md-3">
 					<input class='form-control auth-field' name="portField" type="text" id="portField">
 				</div>
-				<div class="checkbox col-md-3">
+				<div class="checkbox col-md-3" style='padding-left:36px;'>
 					<label><input id='schemeField' name='schemeField' type="checkbox" class='auth-field' />HTTPS</label>
 				</div>
 			</div>
@@ -111,7 +111,7 @@ if((isset($_GET['x_a'])) && (isset($_GET['x_b']))){
 			  	<div class="post-forms hidden form-group ">
 			   		<label for="exampleInputFile">File input</label>
 			    	<input type="file" name='fileInput' id="fileInput">
-			   		<a>Clear file</a>
+			   		<a class='btn-link' onclick="resetFormElem($('#fileInput'))">Clear file</a>
 					<input class='form-control' name="paramField" type="text" placeholder="File Param Name" id="paramField">
   				</div>
 			  <div class="post-forms form-group hidden">
